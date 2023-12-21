@@ -22,10 +22,10 @@ class _TvNewsScreenState extends State<TvNewsScreen> {
       "id": "google-news-in"
     },
     {
-      "name": "The Hindu",
+      "name": "BBC News",
       "url":
-      "https://qph.cf2.quoracdn.net/main-qimg-81a7ce829dd117f8cc88225156892bee-lq",
-      "id": "the-hindu"
+      "https://www.shutterstock.com/image-vector/bbc-news-logo-vector-editorial-600nw-2335465475.jpg",
+      "id": "bbc-news"
     },
     {
       "name": "Times of India",

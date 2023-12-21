@@ -7,7 +7,7 @@ class NetworkService {
   const NetworkService._();
 
   static Map<String, String> _getHeaders() =>
-      {'Content-Type': 'application/json'};
+      {'Content-Type': 'application/json', "Access-Control-Allow-Origin": "\*"};
 
   static Future<http.Response>? _createRequest(
       {required RequestType requestType,

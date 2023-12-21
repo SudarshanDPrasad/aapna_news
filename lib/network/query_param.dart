@@ -22,4 +22,4 @@ class QP {
 }
 
 
-// https://newsapi.org/v2/top-headlines?sources=google-news-in&apiKey=ab424053c14248b6bbb7da59fa401cfd
+// https://newsapi.org/v2/top-headlines?sources=the-hindu&apiKey=ab424053c14248b6bbb7da59fa401cfd
