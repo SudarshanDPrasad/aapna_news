@@ -33,88 +33,50 @@ class _HomeScreenState extends State<HomeScreen> {
         automaticallyImplyLeading: false,
         title: const Center(child: Text("Aapna News")),
       ),
-      bottomNavigationBar: !kIsWeb
-          ? NavigationBar(
-              onDestinationSelected: (int index) {
-                setState(() {
-                  _selectedIndex = index;
-                });
-              },
-              indicatorColor: Colors.amber,
-              selectedIndex: _selectedIndex,
-              destinations: const <Widget>[
-                NavigationDestination(
-                  selectedIcon: Icon(Icons.home),
-                  icon: Icon(Icons.home_outlined),
-                  label: 'Home',
-                ),
-                NavigationDestination(
-                  selectedIcon: Icon(Icons.search),
-                  icon: Icon(Icons.search_off_rounded),
-                  label: 'Search',
-                ),
-                NavigationDestination(
-                  selectedIcon: Icon(Icons.bookmark),
-                  icon: Icon(Icons.bookmark_outline),
-                  label: 'BookMark',
-                ),
-                NavigationDestination(
-                  selectedIcon: Icon(Icons.live_tv),
-                  icon: Icon(Icons.tv_outlined),
-                  label: 'Live Tv News',
-                ),
-              ],
-            )
-          : NavigationBar(
-              onDestinationSelected: (int index) {
-                setState(() {
-                  _selectedIndex = index;
-                });
-              },
-              indicatorColor: Colors.amber,
-              selectedIndex: _selectedIndex,
-              destinations: const <Widget>[
-                NavigationDestination(
-                  selectedIcon: Icon(Icons.home),
-                  icon: Icon(Icons.home_outlined),
-                  label: 'Home',
-                ),
-                NavigationDestination(
-                  selectedIcon: Icon(Icons.search),
-                  icon: Icon(Icons.search_off_rounded),
-                  label: 'Search',
-                ),
-                NavigationDestination(
-                  selectedIcon: Icon(Icons.live_tv),
-                  icon: Icon(Icons.tv_outlined),
-                  label: 'Live Tv News',
-                ),
-              ],
-            ),
-      body: !kIsWeb
-          ? <Widget>[
-              /// Home page
-              const MainScreen(),
+      bottomNavigationBar: NavigationBar(
+        onDestinationSelected: (int index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        indicatorColor: Colors.amber,
+        selectedIndex: _selectedIndex,
+        destinations: const <Widget>[
+          NavigationDestination(
+            selectedIcon: Icon(Icons.home),
+            icon: Icon(Icons.home_outlined),
+            label: 'Home',
+          ),
+          NavigationDestination(
+            selectedIcon: Icon(Icons.search),
+            icon: Icon(Icons.search_off_rounded),
+            label: 'Search',
+          ),
+          NavigationDestination(
+            selectedIcon: Icon(Icons.bookmark),
+            icon: Icon(Icons.bookmark_outline),
+            label: 'BookMark',
+          ),
+          NavigationDestination(
+            selectedIcon: Icon(Icons.live_tv),
+            icon: Icon(Icons.tv_outlined),
+            label: 'Live Tv News',
+          ),
+        ],
+      ),
+      body: <Widget>[
+        /// Home page
+        const MainScreen(),
 
-              /// Notifications page
-              const SearchScreen(),
+        /// Notifications page
+        const SearchScreen(),
 
-              /// BookMark page
-              BookMarkScreen(),
+        /// BookMark page
+        BookMarkScreen(),
 
-              /// Live Tv News page
-              TvNewsScreen()
-            ][_selectedIndex]
-          : <Widget>[
-              /// Home page
-              const MainScreen(),
-
-              /// Notifications page
-              const SearchScreen(),
-
-              /// Live Tv News page
-              TvNewsScreen()
-            ][_selectedIndex],
+        /// Live Tv News page
+        TvNewsScreen()
+      ][_selectedIndex],
     );
   }
 }
