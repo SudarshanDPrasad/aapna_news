@@ -38,59 +38,68 @@ class _MainScreenState extends State<MainScreen> {
     return SingleChildScrollView(
         child: Padding(
       padding: EdgeInsets.all(10),
-      child: Column(
-        children: [
-          const Text(
-            "Trending News",
-            style: TextStyle(
-                fontWeight: FontWeight.bold, fontSize: 14, fontFamily: "Acme"),
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height * 0.2,
-            child: TrendingCarousel(),
-          ),
-          SizedBox(height: 20),
-          Container(
-            margin: const EdgeInsets.only(top: 5, left: 15),
-            height: 50,
-            child: ListView.builder(
-                itemCount: news.length,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) {
-                  return SizedBox(
-                    width: 120,
-                    child: Container(
-                      padding: EdgeInsets.all(5),
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: _selectedIndex == index
-                                  ? Colors.cyan
-                                  : Colors.transparent),
-                          onPressed: () {
-                            _selectedIndex = index;
-                            setState(() {
-                              _selectedIndex;
-                            });
-                            getArticles();
-                          },
-                          child: Text(
-                            news[index],
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 12,
-                                fontFamily: "Signatra"),
-                          )),
-                    ),
-                  );
-                }),
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            child: CategoryNews(category: news[_selectedIndex]),
-          )
-        ],
+      child: RefreshIndicator(
+        onRefresh: () async {
+          await Future.delayed(Duration(seconds: 1));
+          setState(() {
+            build(context);
+            getData();
+          });
+        },
+        child: Column(
+          children: [
+            const Text(
+              "Trending News",
+              style: TextStyle(
+                  fontWeight: FontWeight.bold, fontSize: 14, fontFamily: "Acme"),
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height * 0.2,
+              child: TrendingCarousel(),
+            ),
+            SizedBox(height: 20),
+            Container(
+              margin: const EdgeInsets.only(top: 5, left: 15),
+              height: 50,
+              child: ListView.builder(
+                  itemCount: news.length,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) {
+                    return SizedBox(
+                      width: 120,
+                      child: Container(
+                        padding: EdgeInsets.all(5),
+                        child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: _selectedIndex == index
+                                    ? Colors.cyan
+                                    : Colors.transparent),
+                            onPressed: () {
+                              _selectedIndex = index;
+                              setState(() {
+                                _selectedIndex;
+                              });
+                              getArticles();
+                            },
+                            child: Text(
+                              news[index],
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 12,
+                                  fontFamily: "Signatra"),
+                            )),
+                      ),
+                    );
+                  }),
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              child: CategoryNews(category: news[_selectedIndex]),
+            )
+          ],
+        ),
       ),
     ));
   }

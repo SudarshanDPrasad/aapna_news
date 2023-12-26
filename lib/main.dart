@@ -11,25 +11,48 @@ import 'package:news_app/screens/login.dart';
 import 'package:news_app/screens/news_detail_screen.dart';
 import 'package:news_app/static/static_values.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:workmanager/workmanager.dart';
 import 'global/global.dart';
 import 'models/database.dart';
 import 'network/query_param.dart';
 
+void callbackDispatcher() {
+  Workmanager().executeTask((task, inputData) async {
+    switch (task) {
+      case "newsUpdate":
+        getData();
+        break;
+    }
+    return Future.value(true);
+  });
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   sharedPreferences = await SharedPreferences.getInstance();
+  Workmanager().initialize(
+    callbackDispatcher,
+    isInDebugMode: false,
+  );
+  // RoomDatabase
   if (!kIsWeb) {
     final database =
         await $FloorAppDatabase.databaseBuilder('app_database.db').build();
     final personDao = database.personDao;
   }
+
+  // Work-manager
+  await Workmanager().registerPeriodicTask(
+    "newsUpdate",
+    "newsUpdate",
+    frequency: const Duration(minutes: 15),
+  );
   String username = sharedPreferences!.getString("username") != null
       ? sharedPreferences!.getString("username").toString()
       : "";
   runApp(MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: username.isNotEmpty ? const HomeScreen() : const LoginScreen()
-  ));
+      home: username.isNotEmpty ? const HomeScreen() : const LoginScreen()));
 }
 
 class TrendingCarousel extends StatefulWidget {
@@ -131,25 +154,4 @@ class _TrendingCarouselState extends State<TrendingCarousel> {
       ),
     );
   }
-
-  Future<List<Article?>> getData() async {
-    final response = await NetworkService.sendRequest(
-        requestType: RequestType.get,
-        url: StaticValues.apiUrl,
-        queryParam: QP.apiQP(
-            apiKey: StaticValues.apiKey, country: StaticValues.apiCountry));
-    print("respnse ${response?.statusCode}");
-    return NetworkHelper.filterResponse(
-        callBack: _listOfArticles,
-        response: response,
-        parameterName: CallBackParameterName.articles,
-        onFailureCallBackWithMessage: (errorType, msg) {
-          print('Error Type  - $errorType, Message - $msg');
-          return null;
-        });
-  }
-
-  List<Article> _listOfArticles(json) => (json as List)
-      .map((e) => Article.fromJson(e as Map<String, dynamic>))
-      .toList();
 }

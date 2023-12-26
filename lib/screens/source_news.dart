@@ -169,10 +169,8 @@ class _SourceNewsState extends State<SourceNews> {
   bool checkArticle(String title) {
     bool articlePresent = false;
     for (int i = 0; i < articlesBookmarks.length; i++) {
-      print("Result : ${articlesBookmarks[i].title}");
       if (articlesBookmarks[i].title == title) {
         articlePresent = true;
-        print("Result : ${articlesBookmarks[i].title} and $title");
       }
     }
     return articlePresent;
