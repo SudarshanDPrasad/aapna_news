@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -5,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../global/global.dart';
 import '../models/article.dart';
+import '../models/article_bookmark.dart';
 import '../models/article_model.dart';
 import '../models/database.dart';
 import '../network/network_enums.dart';
@@ -132,6 +135,7 @@ class _SourceNewsState extends State<SourceNews> {
                                           articles[index].source!.name != null
                                               ? articles[index].source!.name!
                                               : "");
+                                      getArticles();
                                     },
                                     icon: checkArticle(articles[index].title!)
                                         ? const Icon(
@@ -162,33 +166,47 @@ class _SourceNewsState extends State<SourceNews> {
     );
   }
 
-  saveArticle(
-      String author,
-      String title,
-      String description,
-      String url,
-      String urlToImage,
-      String pubslishAt,
-      String content,
-      String sourceName) async {
-    final database =
-    await $FloorAppDatabase.databaseBuilder('app_database.db').build();
-
-    final personDao = database.personDao;
-    final person = Person(author, title, description, url, urlToImage,
-        pubslishAt, content, sourceName);
-
-    await personDao.insertPerson(person);
-  }
-
   bool checkArticle(String title) {
     bool articlePresent = false;
-    articlesBookmark.forEach((element) {
-      if(element.title == title){
+    for (int i = 0; i < articlesBookmarks.length; i++) {
+      print("Result : ${articlesBookmarks[i].title}");
+      if (articlesBookmarks[i].title == title) {
         articlePresent = true;
+        print("Result : ${articlesBookmarks[i].title} and $title");
       }
-    });
+    }
     return articlePresent;
+  }
+
+  getArticles() async {
+    final response = await NetworkService.sendRequest(
+        requestType: RequestType.get,
+        url: StaticValues.apiUserLogin,
+        queryParam: QP.searchUser(
+          username: sharedPreferences!.getString("username")!,
+          password:
+          "12345678", // TODO: change and get this from login and save in shared preference and use here
+        ));
+    if (response != null) {
+      var map = json.decode(response.body);
+      var filter = map as Map<String, dynamic>;
+      if (response.statusCode == 200) {
+        if (filter['error'] != null) {
+
+        } else if (filter['user']['username'] != null) {
+          List list = filter['articles'];
+          articlesBookmarks.clear();
+          list.forEach((element) {
+            ArticleBookmark articleBookmark = ArticleBookmark.fromJson(element);
+            articlesBookmarks.add(articleBookmark);
+          });
+          setState(() {
+            build(context);
+            articlesBookmarks;
+          });
+        }
+      }
+    }
   }
 
   Future<List<Article?>> getData() async {

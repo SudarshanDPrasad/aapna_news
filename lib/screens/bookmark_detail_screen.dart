@@ -3,12 +3,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:news_app/models/article.dart';
+import 'package:news_app/models/article_bookmark.dart';
 import 'package:news_app/models/article_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class BookMarkDetailScreen extends StatefulWidget {
-  Person? article;
+  ArticleBookmark? article;
   int? index;
 
   BookMarkDetailScreen({this.article, this.index});

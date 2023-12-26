@@ -1,5 +1,3 @@
-
-
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/foundation.dart';
@@ -9,32 +7,39 @@ import 'package:news_app/network/network_enums.dart';
 import 'package:news_app/network/network_helper.dart';
 import 'package:news_app/network/network_service.dart';
 import 'package:news_app/screens/home_screen.dart';
+import 'package:news_app/screens/login.dart';
 import 'package:news_app/screens/news_detail_screen.dart';
 import 'package:news_app/static/static_values.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'global/global.dart';
 import 'models/database.dart';
 import 'network/query_param.dart';
 
 Future<void> main() async {
-  if(!kIsWeb){
-
-    WidgetsFlutterBinding.ensureInitialized();
-    final database = await $FloorAppDatabase.databaseBuilder('app_database.db').build();
+  WidgetsFlutterBinding.ensureInitialized();
+  sharedPreferences = await SharedPreferences.getInstance();
+  if (!kIsWeb) {
+    final database =
+        await $FloorAppDatabase.databaseBuilder('app_database.db').build();
     final personDao = database.personDao;
   }
-  runApp(const MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: HomeScreen(),
+  String username = sharedPreferences!.getString("username") != null
+      ? sharedPreferences!.getString("username").toString()
+      : "";
+  runApp(MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: username.isNotEmpty ? const HomeScreen() : const LoginScreen()
   ));
 }
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+class TrendingCarousel extends StatefulWidget {
+  const TrendingCarousel({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  State<TrendingCarousel> createState() => _TrendingCarouselState();
 }
 
-class _HomeState extends State<Home> {
+class _TrendingCarouselState extends State<TrendingCarousel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,21 +49,21 @@ class _HomeState extends State<Home> {
           if (snapshot.hasData) {
             final List<Article> articles = snapshot.data as List<Article>;
             return CarouselSlider(
-                options: CarouselOptions(
-                  height: 400,
-                  aspectRatio: 16/9,
-                  viewportFraction: 0.8,
-                  initialPage: 0,
-                  enableInfiniteScroll: true,
-                  reverse: false,
-                  autoPlay: true,
-                  autoPlayInterval: const Duration(seconds: 3),
-                  autoPlayAnimationDuration: const Duration(milliseconds: 800),
-                  autoPlayCurve: Curves.fastOutSlowIn,
-                  enlargeCenterPage: true,
-                  enlargeFactor: 0.3,
-                  scrollDirection: Axis.horizontal,
-                ),
+              options: CarouselOptions(
+                height: 400,
+                aspectRatio: 16 / 9,
+                viewportFraction: 0.8,
+                initialPage: 0,
+                enableInfiniteScroll: true,
+                reverse: false,
+                autoPlay: true,
+                autoPlayInterval: const Duration(seconds: 3),
+                autoPlayAnimationDuration: const Duration(milliseconds: 800),
+                autoPlayCurve: Curves.fastOutSlowIn,
+                enlargeCenterPage: true,
+                enlargeFactor: 0.3,
+                scrollDirection: Axis.horizontal,
+              ),
               items: articles.map((i) {
                 return Card(
                   elevation: 2,
@@ -71,31 +76,30 @@ class _HomeState extends State<Home> {
                             context,
                             MaterialPageRoute(
                                 builder: (c) => NewsDetailScreen(
-                                  article: i,
-                                  index: 1,
-                                )));
+                                      article: i,
+                                      index: 1,
+                                    )));
                       },
                       child: Stack(
                         children: [
                           i.urlToImage != null
                               ? ClipRRect(
-                            borderRadius: BorderRadius.circular(8.0),
-                            child: Image.network(
-                              i.urlToImage!,
-                              width: MediaQuery.of(context).size.width *
-                                  0.8,
-                              height:
-                              MediaQuery.of(context).size.height *
-                                  0.2,
-                              fit: BoxFit.cover,
-                            ),
-                          )
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  child: Image.network(
+                                    i.urlToImage!,
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.8,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.2,
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
                               : Image.asset(
-                            "images/no_image.png",
-                            width:
-                            MediaQuery.of(context).size.width * 0.8,
-                            fit: BoxFit.fill,
-                          ),
+                                  "images/no_image.png",
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.8,
+                                  fit: BoxFit.fill,
+                                ),
                           Align(
                             alignment: Alignment.bottomLeft,
                             child: Padding(
@@ -116,8 +120,7 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                 );
-              }
-            ).toList(),
+              }).toList(),
             );
           } else {
             return const Center(

@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:news_app/main.dart';
 import 'package:news_app/screens/category_news.dart';
 
+import '../global/global.dart';
+import '../models/article_bookmark.dart';
 import '../models/article_model.dart';
 import '../network/network_enums.dart';
 import '../network/network_helper.dart';
@@ -44,7 +48,7 @@ class _MainScreenState extends State<MainScreen> {
           Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height * 0.2,
-            child: Home(),
+            child: TrendingCarousel(),
           ),
           SizedBox(height: 20),
           Container(
@@ -68,6 +72,7 @@ class _MainScreenState extends State<MainScreen> {
                             setState(() {
                               _selectedIndex;
                             });
+                            getArticles();
                           },
                           child: Text(
                             news[index],
@@ -88,5 +93,36 @@ class _MainScreenState extends State<MainScreen> {
         ],
       ),
     ));
+  }
+
+  getArticles() async {
+    final response = await NetworkService.sendRequest(
+        requestType: RequestType.get,
+        url: StaticValues.apiUserLogin,
+        queryParam: QP.searchUser(
+          username: sharedPreferences!.getString("username")!,
+          password:
+          "12345678", // TODO: change and get this from login and save in shared preference and use here
+        ));
+    if (response != null) {
+      var map = json.decode(response.body);
+      var filter = map as Map<String, dynamic>;
+      if (response.statusCode == 200) {
+        if (filter['error'] != null) {
+
+        } else if (filter['user']['username'] != null) {
+          List list = filter['articles'];
+          articlesBookmarks.clear();
+          list.forEach((element) {
+            ArticleBookmark articleBookmark = ArticleBookmark.fromJson(element);
+            articlesBookmarks.add(articleBookmark);
+          });
+          setState(() {
+            build(context);
+            articlesBookmarks;
+          });
+        }
+      }
+    }
   }
 }
