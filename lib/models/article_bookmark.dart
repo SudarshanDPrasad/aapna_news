@@ -2,6 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 @JsonSerializable(createToJson: false)
 class ArticleBookmark {
   @JsonKey(defaultValue: 'Unknown')
+  int? id;
   String? author;
   String? title;
   String? description;
@@ -12,6 +13,7 @@ class ArticleBookmark {
   String? sourceName;
 
   ArticleBookmark({
+    this.id,
     this.author,
     this.title,
     this.description,
@@ -23,6 +25,7 @@ class ArticleBookmark {
   });
 
   ArticleBookmark.fromJson(Map<String, dynamic> json) {
+    id = json["id"] as int? ?? 0;
     author = json["author"] as String? ?? 'Unknown';
     title = json["title"];
     description = json["description"];
@@ -35,6 +38,7 @@ class ArticleBookmark {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
+    data["id"] = id;
     data["author"] = author;
     data["url"] = url;
     data["title"] = title;

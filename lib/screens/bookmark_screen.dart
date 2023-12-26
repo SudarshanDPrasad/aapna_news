@@ -132,7 +132,7 @@ class _BookMarkScreenState extends State<BookMarkScreen> {
                                 child: IconButton(
                                     onPressed: () {
                                       removeArticle(
-                                          articlesBookmarks[index].title!);
+                                          articlesBookmarks[index].id!);
                                     },
                                     icon: const Icon(
                                       Icons.bookmark,
@@ -170,7 +170,7 @@ class _BookMarkScreenState extends State<BookMarkScreen> {
     );
   }
 
-  removeArticle(String articleTitle) async {
+  removeArticle(int articleId) async {
     // final response = await NetworkService.sendRequest(
     //     requestType: RequestType.delete,
     //     url: StaticValues.apiAddNewArticle,
@@ -180,7 +180,7 @@ class _BookMarkScreenState extends State<BookMarkScreen> {
     //   getArticles();
     // });
     final deleteArticle = jsonEncode({
-      "title": articleTitle,
+      "id": articleId,
       "username": sharedPreferences!.getString("username")!,
     });
     final response = await NetworkService.sendRequest(
@@ -224,6 +224,7 @@ class _BookMarkScreenState extends State<BookMarkScreen> {
           list.forEach((element) {
             ArticleBookmark articleBookmark = ArticleBookmark.fromJson(element);
             articlesBookmarks.add(articleBookmark);
+            print("Article : $element");
           });
           setState(() {
             build(context);

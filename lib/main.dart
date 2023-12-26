@@ -42,11 +42,11 @@ Future<void> main() async {
   }
 
   // Work-manager
-  await Workmanager().registerPeriodicTask(
-    "newsUpdate",
-    "newsUpdate",
-    frequency: const Duration(minutes: 15),
-  );
+  // await Workmanager().registerPeriodicTask(
+  //   "newsUpdate",
+  //   "newsUpdate",
+  //   frequency: const Duration(minutes: 15),
+  // );
   String username = sharedPreferences!.getString("username") != null
       ? sharedPreferences!.getString("username").toString()
       : "";
